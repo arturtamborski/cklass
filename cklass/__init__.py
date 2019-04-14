@@ -28,6 +28,18 @@ def _set_attr(klass, attr_name, value, safe):
                      type(attr).__name__, value, type(value).__name__))
 
 
+def _deep_merge(source, destination):
+    for key, value in source.items():
+        if type(value) is dict:
+            node = destination.setdefault(key, {})
+            _deep_merge(value, node)
+        else:
+            if destination is None:
+                destination = {}
+            destination[key] = value
+    return destination
+
+
 def _uppercase_keys_in_dict(data):
     ret = {}
 
@@ -71,72 +83,49 @@ def _load_first_file_from_dirs(name, dirs):
     return {}
 
 
-def _overwrite_attrs(klass, config, safe, prefix='', debug=False):
-    msg = 'DEBUG: cklass:'
+def _overwrite_attrs(klass, config, safe, env_prefix=''):
+    klass_name = klass.__name__
+
+    if env_prefix:
+        env_prefix += '__'
 
     for attr_name in dir(klass):
-        klass_name = klass.__name__
         attr_value = getattr(klass, attr_name)
+        sub_config = config[klass_name.upper()]
 
-        # params have to be upper-cased
-        if not attr_name.isupper():
-            # classes can be upper-cased or capitalized
-            if not attr_name.istitle() or type(attr_value) is not type:
-                continue
-
-        if debug:
-            print(msg, "Updating '%s.%s'..." % (klass_name, attr_name))
-
-        sub_config = config[klass_name]
-        env_name = '%s__%s' % (klass_name, attr_name)
-
-        # maybe it's in environment?
-        if attr_name not in sub_config:
-            if type(attr_value) is type:
-                _overwrite_attrs(attr_value, config, safe, prefix=prefix)
-                continue
-
-            if prefix and prefix != klass_name:
-                env_name = '%s__%s' % (prefix, env_name)
-            env_name = env_name.upper()
-
-            if debug:
-                print(msg, "  Looking for '%s' in environ..." % env_name)
-
-            if env_name not in os.environ:
-                if debug:
-                    print(msg, "  Not found, skipped.")
-                continue
-
-            if debug:
-                print(msg, "  Found, updating...")
-
-            temp_config = sub_config
-            _, *levels, temp_name = env_name.split('__')
-
-            for level in levels:
-                temp_config = temp_config.get(level, {})
-            temp_config[temp_name] = os.environ[env_name]
-            sub_config.update(temp_config)
-
-        sub_value = sub_config[attr_name]
+        if attr_name.islower():
+            continue
 
         if type(attr_value) is type:
-            if type(sub_value) is not dict:
-                raise TypeError("'%s.%s' expected value with type "
-                                "'dict', got value with type '%s' "
-                                "instead." % (klass_name, attr_name,
-                                 type(sub_value).__name__))
+            if not attr_name.istitle():
+                continue
 
-            prefix += '%s%s' % ('__' if prefix else '', klass_name)
-            _overwrite_attrs(attr_value, sub_config, safe, prefix=prefix)
+            if sub_config[attr_name.upper()] is None:
+                raise TypeError("Class '%s.%s' expected value with"
+                                " type 'dict', got 'None' instead."
+                                % (klass_name, attr_name))
+
+        # we're dropping case sensitivity here
+        attr_name = attr_name.upper()
+        klass_name = klass_name.upper()
+
+        if type(attr_value) is not type:
+            env_name = env_prefix + klass_name + '__' + attr_name
+            value = attr_value
+
+            if attr_name in sub_config:
+                value = sub_config[attr_name]
+
+            if env_name in os.environ:
+                value = os.environ[env_name]
+
+            _set_attr(klass, attr_name, value, safe)
         else:
-            _set_attr(klass, attr_name, sub_value, safe)
-            if debug:
-                print(msg, "  Updated with '%s' from config." % sub_value)
+            _overwrite_attrs(attr_value, sub_config, safe,
+                             env_prefix=env_prefix + klass_name)
 
 
-def load_config(klass, debug=False):
+def load_config(klass):
     """ Update config class with values found in configuration file,
         secrets file and environment variables.
     """
@@ -153,7 +142,6 @@ def load_config(klass, debug=False):
     s_path = _get_attr(klass, '_secret_filepath', ['.'])
     config = _load_first_file_from_dirs(c_name, c_path)
     secret = _load_first_file_from_dirs(s_name, s_path)
-    config.update(secret)
-    config = {klass.__name__: config}
+    config = {klass.__name__.upper(): _deep_merge(secret, config)}
 
-    _overwrite_attrs(klass, config, t_safe, prefix=prefix, debug=debug)
+    _overwrite_attrs(klass, config, t_safe, env_prefix=prefix)
