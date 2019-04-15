@@ -53,13 +53,7 @@ def _uppercase_keys_in_dict(data):
     return ret
 
 
-def _load_first_file_from_dirs(name, dirs):
-    config_loaders = {
-        'ini':  ['ini', 'load'],
-        'json': ['json', 'load'],
-        'toml': ['toml', 'load'],
-        'yaml': ['yaml', 'safe_load']
-    }
+def _load_first_file_from_dirs(name, dirs, loaders):
 
     for d in dirs:
         path = os.path.expanduser(d) + '/' + name
@@ -69,10 +63,9 @@ def _load_first_file_from_dirs(name, dirs):
         with open(path) as file:
             try:
                 ext = name.rsplit('.')[1]
-                mod = config_loaders[ext][0]
-                fun = config_loaders[ext][1]
-                load_fun = getattr(__import__(mod), fun)
-                data = load_fun(file)
+                mod = loaders[ext][0]
+                fun = loaders[ext][1]
+                data = getattr(__import__(mod), fun)(file)
                 if data:
                     return _uppercase_keys_in_dict(data)
 
@@ -135,13 +128,16 @@ def load_config(klass):
                         "type '%s' instead." % type(klass).__name__)
 
     t_safe = _get_attr(klass, '_type_safe', True)
-    prefix = _get_attr(klass, '_env_var_prefix', '')
+    prefix = _get_attr(klass, '_environ_prefix', '')
     c_name = _get_attr(klass, '_config_filename', 'config.yaml')
     s_name = _get_attr(klass, '_secret_filename', 'secret.yaml')
     c_path = _get_attr(klass, '_config_filepath', ['.'])
     s_path = _get_attr(klass, '_secret_filepath', ['.'])
-    config = _load_first_file_from_dirs(c_name, c_path)
-    secret = _load_first_file_from_dirs(s_name, s_path)
-    config = {klass.__name__.upper(): _deep_merge(secret, config)}
+    f_load = _get_attr(klass, '_format_loaders', {
+        'ini':  ['ini',  'load'], 'json': ['json',      'load'],
+        'toml': ['toml', 'load'], 'yaml': ['yaml', 'safe_load']})
+    config = _load_first_file_from_dirs(c_name, c_path, f_load)
+    secret = _load_first_file_from_dirs(s_name, s_path, f_load)
+    config = _deep_merge(secret, config)
 
     _overwrite_attrs(klass, config, t_safe, env_prefix=prefix)
