@@ -2,13 +2,13 @@ import setuptools
 
 setuptools.setup(
             name = 'cklass',
-         version = '0.0.1',
+         version = '0.0.2',
          license = 'MIT',
           author = 'Artur Tamborski',
     author_email = 'tamborskiartur@gmail.com',
      description = 'Python module for loading config from files and env variables to class',
              url = 'https://github.com/arturtamborski/cklass',
-    download_url = 'https://github.com/arturtamborski/cklass/archive/0.0.1.tar.gz',
+    download_url = 'https://github.com/arturtamborski/cklass/archive/0.0.2.tar.gz',
         keywords = 'configuration config loader',
      classifiers = [
         'Development Status :: 4 - Beta',
