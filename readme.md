@@ -23,7 +23,7 @@ and environment variables to single configuration class without a hassle!
 
 ### Installation
 ```bash
-    pip install cklass
+pip install cklass
 ```
 
 ### Usage
@@ -43,38 +43,38 @@ This also means that all keys are **not** case sensitive.
 
 For example:
 ```yaml
-    # config.yaml
-    login:    'this will be ignored'
-    password: 'this will be ignored'
-    
-    uSER:
-        logIN: 'pi'
-        paSSwoRD: 'raspberry'
+# config.yaml
+login:    'this will be ignored'
+password: 'this will be ignored'
+
+uSER:
+    logIN: 'pi'
+    paSSwoRD: 'raspberry'
 ```
 ```yaml
-    # secret.yaml
-    User:
-        # this will overwrite `logIN` and `pasSSwoRD` from above
-        login: 'root' 
-        password: 'yrrebpsar'
+# secret.yaml
+User:
+    # this will overwrite `logIN` and `pasSSwoRD` from above
+    login: 'root' 
+    password: 'yrrebpsar'
 ```
 ```bash
-    # env variable
-    EXPORT USER__PASSWORD='mytopsecretpassword'
+# env variable
+EXPORT USER__PASSWORD='mytopsecretpassword'
 ```
 ```python
-    # python
-    import cklass 
+# python
+import cklass 
+
+class User:
+    LOGIN = 'this string will be overwritten'
+    password = 'this will NOT be overwritten'
+    Password = 'this will NOT be overwritten'
+    PASSWORD = 'default password, will be overwritten'
     
-    class User:
-        LOGIN = 'this string will be overwritten'
-        password = 'this will NOT be overwritten'
-        Password = 'this will NOT be overwritten'
-        PASSWORD = 'default password, will be overwritten'
-        
-        other_variable_kinda_like_private = 42
-    
-    cklass.load_config(User)
+    other_variable_kinda_like_private = 42
+
+cklass.load_config(User)
 ``` 
     
 
@@ -101,63 +101,63 @@ set in (1), (2) and (3).
 
 
 ```python
-    # python
-    import cklass
+# python
+import cklass
 
-    # any name will work
-    class Config:
+# any name will work
+class Config:
+
+    PATH_TO_SOMETHING = '/etc/default/path/'
     
-        PATH_TO_SOMETHING = '/etc/default/path/'
-        
-        class User:
-            NAME  = ''
-            EMAIL = ''
-            PASS  = ''
+    class User:
+        NAME  = ''
+        EMAIL = ''
+        PASS  = ''
 
-        DEBUG = False
+    DEBUG = False
 
-        class SERVER:
-          OPEN_PORTS = ['80']
+    class SERVER:
+      OPEN_PORTS = ['80']
 
-        SECRET_KEY = ''
-        
-        _type_safe = True
-        _env_var_prefix = 'MYAPP'
-        _config_filename = 'config.yaml'
-        _secret_filename = 'secret.json'
-        _config_filepath = ['/etc/myapp/conf/']
-        _secret_filepath = ['.']
-        _format_loaders  = {
-            'json': ['jsonlib',  'read'],
-            'yaml': ['metayaml', 'read'],
-        }
+    SECRET_KEY = ''
+    
+    _type_safe = True
+    _env_var_prefix = 'MYAPP'
+    _config_filename = 'config.yaml'
+    _secret_filename = 'secret.json'
+    _config_filepath = ['/etc/myapp/conf/']
+    _secret_filepath = ['.']
+    _format_loaders  = {
+        'json': ['jsonlib',  'read'],
+        'yaml': ['metayaml', 'read'],
+    }
 
 
-    cklass.load_config(Config)
+cklass.load_config(Config)
 ```
 ```yaml
-    # config.yaml
-    config:
-        path-to-something: /etc/app/
-        debug: True
+# config.yaml
+config:
+    path-to-something: /etc/app/
+    debug: True
 
-        server:
-          open-ports:
-            - '22'
-            - '80'
-            - '443'
+    server:
+      open-ports:
+        - '22'
+        - '80'
+        - '443'
 ```
 ```yaml
-    # secret.yaml
-    config:
-        user:
-            name: Your Secret Name
-            email: example@example.com
+# secret.yaml
+config:
+    user:
+        name: Your Secret Name
+        email: example@example.com
 ```
 ```bash
-    # envvars.sh
-    export MYAPP__CONFIG__SECRET_KEY="supersecretkey"
-    export MYAPP__CONFIG__USER__PASS="secretpassword"
+# envvars.sh
+export MYAPP__CONFIG__SECRET_KEY="supersecretkey"
+export MYAPP__CONFIG__USER__PASS="secretpassword"
 ```
 
 
@@ -172,7 +172,7 @@ All values specified below are considered as default. Any of these variables can
 ##### Type Safety
 
 ```python
-    _type_safe = True
+_type_safe = True
 ```
 This will compare and ensure that all keys overwritten in config/secret file have the same
 type as the variables defined in class except `None`. If set to `False` this check 
@@ -186,7 +186,7 @@ Example:
 ##### Environment Prefix
 
 ```python
-    _environ_prefix = ''
+_environ_prefix = ''
 ```
 This allows you to define custom environment variable prefix to act as a namespace.
 You could for example set this to `'MYAPP'` which would cause to look up only
@@ -198,8 +198,8 @@ only single underscores - eg. `CORRECT_NAME`, `INCORRECT___NAME`.
 ##### Config / Secret File Names
 
 ```python
-    _config_filename = 'config.yaml'
-    _secret_filename = 'secret.yaml'
+_config_filename = 'config.yaml'
+_secret_filename = 'secret.yaml'
 ```
 File name of the config. Extension has to match the defined one in `_format_loaders`.
     
@@ -207,8 +207,8 @@ File name of the config. Extension has to match the defined one in `_format_load
 ##### Config / Secret File Paths
 
 ```python
-    _config_filepath = ['.']
-    _secret_filepath = ['.']
+_config_filepath = ['.']
+_secret_filepath = ['.']
 ```
 List of paths where function will look for `_config__filename` and `_secret_filename`.
 For example, You could change it to `['~', '.']` which would cause the function to 
@@ -218,12 +218,12 @@ Only the first file which will be successfully opened will be taken into account
 
 ##### Format Loaders
 ```python
-    _format_loaders  = {
-        'ini':  ['ini',  'load'],
-        'json': ['json', 'load'],
-        'toml': ['toml', 'load'],
-        'yaml': ['yaml', 'safe_load'],
-    }
+_format_loaders  = {
+    'ini':  ['ini',  'load'],
+    'json': ['json', 'load'],
+    'toml': ['toml', 'load'],
+    'yaml': ['yaml', 'safe_load'],
+}
 ```
 
 Format loaders consists of a nested dictionary with key matching file extension
@@ -238,53 +238,53 @@ with `yaml` extension will be loaded via `read` function defined in `metayaml` m
 #### Real-Live Example
 
 ```python
-    # config.py
-    import cklass
+# config.py
+import cklass
+
+class Root:
+    _env_var_prefix = 'SIMPLEWEBAPP'
+    _config_filepath = ['./conf']
+    _secret_filepath = ['./conf']
+
+class Common(Root):
+    NAME = 'Simple Web App'
+    DEBUG = True
+    DATE = ''
     
-    class Root:
-        _env_var_prefix = 'SIMPLEWEBAPP'
-        _config_filepath = ['./conf']
-        _secret_filepath = ['./conf']
+    BASE_DIR = '/app'
+    SRC_DIR = './src'
     
-    class Common(Root):
-        NAME = 'Simple Web App'
-        DEBUG = True
-        DATE = ''
-        
-        BASE_DIR = '/app'
-        SRC_DIR = './src'
-        
-        ALLOWED_HOSTS = []
-        
-        class Secret:
-            KEY = ''
-        
-        _config_filename = 'common.yaml'
-        _secret_filename = 'common.json'
+    ALLOWED_HOSTS = []
     
-    class Database(Root):
-        ENGINE = 'sqlite3'
-        HOST = 'localhost'
-        NAME = 'simplewebapp_db'
-        
-        class Credentials:
-            USER = 'readonly'
-            PASS = 'readonly'
-        
-        _config_filename = 'database.yaml'
-        _secret_filename = 'database.json'
-        
-    cklass.load_config(Common)
-    cklass.load_config(Database)
+    class Secret:
+        KEY = ''
+    
+    _config_filename = 'common.yaml'
+    _secret_filename = 'common.json'
+
+class Database(Root):
+    ENGINE = 'sqlite3'
+    HOST = 'localhost'
+    NAME = 'simplewebapp_db'
+    
+    class Credentials:
+        USER = 'readonly'
+        PASS = 'readonly'
+    
+    _config_filename = 'database.yaml'
+    _secret_filename = 'database.json'
+    
+cklass.load_config(Common)
+cklass.load_config(Database)
 ``` 
 ```yaml
-    # conf/common.yaml 
-    Common:
-        debug = no
-        allowed-hosts:
-            - 'localhost'
-            - '127.0.0.1'
-            - 'mydomain.local'
+# conf/common.yaml 
+Common:
+    debug = no
+    allowed-hosts:
+        - 'localhost'
+        - '127.0.0.1'
+        - 'mydomain.local'
 ```
 ```json  
     # conf/secret.json
@@ -297,64 +297,64 @@ with `yaml` extension will be loaded via `read` function defined in `metayaml` m
     }
 ```     
 ```yaml
-    # conf/database.yaml
-    Database:
-        engine: postgresql
-        host: psql://localhost
+# conf/database.yaml
+Database:
+    engine: postgresql
+    host: psql://localhost
 ``` 
 ```json
-    # conf/database.json
-    {
-      "database": {
-        "credentials": {
-          "user": "dbuser",
-          "pass": "pbpass"
-        }
-      }
-    } 
+# conf/database.json
+{
+  "database": {
+    "credentials": {
+      "user": "dbuser",
+      "pass": "pbpass"
+    }
+  }
+} 
 ``` 
 ```bash
-    # conf/environment.sh
-    #!/bin/bash
-    
-    EXPORT_SIMPLEWEBAPP__COMMON__DATE='$(date)'
-    EXPORT SIMPLEWEBAPP__COMMON__SECRET__KEY='seckey'
-    EXPORT SIMPLEWEBAPP__DATABASE__CREDENTIALS__PASS='supersecretdbpass'
+# conf/environment.sh
+#!/bin/bash
+
+EXPORT_SIMPLEWEBAPP__COMMON__DATE='$(date)'
+EXPORT SIMPLEWEBAPP__COMMON__SECRET__KEY='seckey'
+EXPORT SIMPLEWEBAPP__DATABASE__CREDENTIALS__PASS='supersecretdbpass'
 ```
     
 ##### Result
 ```python
-    Common:
-        NAME = 'Simple Web App'
-        
-        # overwritten in conf/common.yaml
-        DEBUG = False
-        
-        # overwritten by environment variable
-        DATE = 'Mon Apr 15 12:35:39 CEST 2019'
-        
-        BASE_DIR = '/app'
-        SRC_DIR = './src'
-        
-        # overwritten in conf/common.yaml
-        ALLOWED_HOSTS = ['localhost', 127.0.0.1', 'mydomain.local']
-        
-        class Secret:
-            # overwritten in conf/common.json
-            # then overwritten by environment variable
-            KEY = 'seckey'
+Common:
+    NAME = 'Simple Web App'
     
-    Database:
-        # overwritten in conf/database.yaml
-        ENGINE = 'postgresql'
-        HOST = 'psql://localhost'
-        NAME = 'simplewebapp_db'
+    # overwritten in conf/common.yaml
+    DEBUG = False
+    
+    # overwritten by environment variable
+    DATE = 'Mon Apr 15 12:35:39 CEST 2019'
+    
+    BASE_DIR = '/app'
+    SRC_DIR = './src'
+    
+    # overwritten in conf/common.yaml
+    ALLOWED_HOSTS = ['localhost', 127.0.0.1', 'mydomain.local']
+    
+    class Secret:
+        # overwritten in conf/common.json
+        # then overwritten by environment variable
+        KEY = 'seckey'
+
+Database:
+    # overwritten in conf/database.yaml
+    ENGINE = 'postgresql'
+    HOST = 'psql://localhost'
+    NAME = 'simplewebapp_db'
+    
+    class Credentials:
+        # overwritten in conf/database.json
+        USER = 'dbuser'
         
-        class Credentials:
-            # overwritten in conf/database.json
-            USER = 'dbuser'
-            
-            # overwritten in conf/database.json
-            # then overwritten by environment variable
-            PASS = 'supersecretdbpass'
+        # overwritten in conf/database.json
+        # then overwritten by environment variable
+        PASS = 'supersecretdbpass'
 ```
