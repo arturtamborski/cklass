@@ -15,6 +15,7 @@ setuptools.setup(
         'Topic :: Software Development',
         'Intended Audience :: Developers',
         'Operating System :: OS Independent',
+        'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 3',
         'License :: OSI Approved :: MIT License',
     ], long_description = open('readme.md').read(),
