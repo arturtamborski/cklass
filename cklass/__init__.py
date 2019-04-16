@@ -77,14 +77,17 @@ def _load_first_file_from_dirs(name, dirs, loaders):
 
 
 def _overwrite_attrs(klass, config, safe, env_prefix=''):
-    klass_name = klass.__name__
+    klass_name = klass.__name__.upper()
 
-    if env_prefix:
+    if klass_name not in config:
+        return
+
+    if env_prefix and not env_prefix.endswith('__'):
         env_prefix += '__'
 
     for attr_name in dir(klass):
         attr_value = getattr(klass, attr_name)
-        sub_config = config[klass_name.upper()]
+        sub_config = config[klass_name]
 
         if attr_name.islower():
             continue
@@ -96,12 +99,9 @@ def _overwrite_attrs(klass, config, safe, env_prefix=''):
             if sub_config[attr_name.upper()] is None:
                 raise TypeError("Class '%s.%s' expected value with"
                                 " type 'dict', got 'None' instead."
-                                % (klass_name, attr_name))
+                                % (klass.__name__, attr_name))
 
-        # we're dropping case sensitivity here
         attr_name = attr_name.upper()
-        klass_name = klass_name.upper()
-
         if type(attr_value) is not type:
             env_name = env_prefix + klass_name + '__' + attr_name
             value = attr_value
