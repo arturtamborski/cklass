@@ -1,0 +1,4 @@
+# conf/database.yaml
+Database:
+  engine: postgresql
+  host: psql://localhost

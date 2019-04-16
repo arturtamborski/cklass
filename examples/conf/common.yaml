@@ -1,0 +1,7 @@
+# conf/common.yaml
+Common:
+  debug: no
+  allowed-hosts:
+    - 'localhost'
+    - '127.0.0.1'
+    - 'mydomain.local'
