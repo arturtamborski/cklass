@@ -3,7 +3,7 @@ import cklass
 
 
 class Root:
-    _env_var_prefix = 'SIMPLEWEBAPP'
+    _environ_prefix = 'SIMPLEWEBAPP'
     _config_filepath = ['./conf']
     _secret_filepath = ['./conf']
 
