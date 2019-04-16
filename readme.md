@@ -237,6 +237,8 @@ with `yaml` extension will be loaded via `read` function defined in `metayaml` m
 
 #### Real-Live Example
 
+See [examples](cklass/tree/master/examples) directory:
+
 ```python
 # config.py
 import cklass
@@ -313,7 +315,7 @@ Common:
     - 'mydomain.local'
 ```
 ```json
-# conf/database.json
+# conf/common.json
 {
   "Common": {
     "Secret": {
@@ -350,6 +352,7 @@ export SIMPLEWEBAPP__DATABASE__CREDENTIALS__PASS="supersecretdbpass"
     
 ##### Result
 ```bash
+source conf/environment.sh
 python3 config.py
 ```
 ```python
