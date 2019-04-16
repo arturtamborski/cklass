@@ -276,31 +276,57 @@ class Database(Root):
     
 cklass.load_config(Common)
 cklass.load_config(Database)
+
+
+print(f'''
+Common:
+    NAME = '{Common.NAME}'
+    DEBUG = {Common.DEBUG}
+    DATE = '{Common.DATE}'
+
+    BASE_DIR = '{Common.BASE_DIR}'
+    SRC_DIR = '.{Common.SRC_DIR}'
+
+    ALLOWED_HOSTS = {Common.ALLOWED_HOSTS}
+
+    Secret:
+        KEY = '{Common.Secret.KEY}'
+
+
+Database:
+    ENGINE = '{Database.ENGINE}'
+    HOST = '{Database.HOST}'
+    NAME = '{Database.NAME}'
+
+    Credentials:
+        USER = {Database.Credentials.USER}'
+        PASS = '{Database.Credentials.PASS}'
+''')
 ``` 
 ```yaml
 # conf/common.yaml 
 Common:
-    debug = no
-    allowed-hosts:
-        - 'localhost'
-        - '127.0.0.1'
-        - 'mydomain.local'
+  debug: no
+  allowed-hosts:
+    - 'localhost'
+    - '127.0.0.1'
+    - 'mydomain.local'
 ```
-```json  
-    # conf/secret.json
-    {
-      "Common": {
-        "Secret": {
-          "key": "AAAAAAAA"
-        }
-      }
+```json
+# conf/database.json
+{
+  "Common": {
+    "Secret": {
+      "key": "AAAAAAAA"
     }
-```     
+  }
+} 
+``` 
 ```yaml
 # conf/database.yaml
 Database:
-    engine: postgresql
-    host: psql://localhost
+  engine: postgresql
+  host: psql://localhost
 ``` 
 ```json
 # conf/database.json
@@ -317,12 +343,15 @@ Database:
 # conf/environment.sh
 #!/bin/bash
 
-EXPORT_SIMPLEWEBAPP__COMMON__DATE='$(date)'
-EXPORT SIMPLEWEBAPP__COMMON__SECRET__KEY='seckey'
-EXPORT SIMPLEWEBAPP__DATABASE__CREDENTIALS__PASS='supersecretdbpass'
+export SIMPLEWEBAPP__COMMON__DATE="$(date)"
+export SIMPLEWEBAPP__COMMON__SECRET__KEY="seckey"
+export SIMPLEWEBAPP__DATABASE__CREDENTIALS__PASS="supersecretdbpass"
 ```
     
 ##### Result
+```bash
+python3 config.py
+```
 ```python
 Common:
     NAME = 'Simple Web App'
@@ -337,7 +366,7 @@ Common:
     SRC_DIR = './src'
     
     # overwritten in conf/common.yaml
-    ALLOWED_HOSTS = ['localhost', 127.0.0.1', 'mydomain.local']
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'mydomain.local']
     
     class Secret:
         # overwritten in conf/common.json
