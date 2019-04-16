@@ -237,7 +237,7 @@ with `yaml` extension will be loaded via `read` function defined in `metayaml` m
 
 #### Real-Live Example
 
-See [examples](cklass/tree/master/examples) directory:
+See [examples](https://github.com/arturtamborski/cklass/tree/master/examples) directory.
 
 ```python
 # config.py
