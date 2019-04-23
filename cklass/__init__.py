@@ -3,7 +3,7 @@ import os
 
 __author__ = 'Artur Tamborski <atamborski@egnyte.com>'
 __license__ = 'MIT'
-__version__ = '0.0.3'
+__version__ = '0.0.4'
 __all__ = ['load_config']
 
 
@@ -86,7 +86,7 @@ def _overwrite_attrs(klass, config, safe, env_prefix=''):
     if env_prefix and not env_prefix.endswith('__'):
         env_prefix += '__'
 
-    for attr_name in dir(klass):
+    for attr_name in klass.__dict__:
         attr_value = getattr(klass, attr_name)
         sub_config = config[klass_name]
 
