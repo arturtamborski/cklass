@@ -3,7 +3,7 @@ import os
 
 __author__ = 'Artur Tamborski <atamborski@egnyte.com>'
 __license__ = 'MIT'
-__version__ = '0.0.4'
+__version__ = '0.0.5'
 __all__ = ['load_config']
 
 

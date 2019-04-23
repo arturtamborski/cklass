@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
             name = 'cklass',
-         version = '0.0.4',
+         version = '0.0.5',
          license = 'MIT',
           author = 'Artur Tamborski',
     author_email = 'tamborskiartur@gmail.com',
