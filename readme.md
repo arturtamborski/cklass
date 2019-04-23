@@ -122,7 +122,7 @@ class Config:
     SECRET_KEY = ''
     
     _type_safe = True
-    _env_var_prefix = 'MYAPP'
+    _environ_prefix = 'MYAPP'
     _config_filename = 'config.yaml'
     _secret_filename = 'secret.json'
     _config_filepath = ['/etc/myapp/conf/']
