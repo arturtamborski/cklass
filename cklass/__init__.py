@@ -18,8 +18,18 @@ def _get_attr(klass, attr_name, default_value=None):
                                     type(default_value).__name__))
 
 
-def _set_attr(klass, attr_name, value, safe):
+def _set_attr(klass, attr_name, value, safe, from_env):
     attr = getattr(klass, attr_name)
+
+    if from_env:
+        if value == 'TRUE':
+            value = True
+        if value == 'FALSE':
+            value = False
+        try:
+            value = int(value)
+        except ValueError:
+            pass
 
     if not safe or attr is None or type(attr) is type(value):
         return setattr(klass, attr_name, value)
@@ -105,15 +115,11 @@ def _overwrite_attrs(klass, config, safe, env_prefix=''):
         attr_name = attr_name.upper()
         if type(attr_value) is not type:
             env_name = env_prefix + klass_name + '__' + attr_name
-            value = attr_value
 
-            if attr_name in sub_config:
-                value = sub_config[attr_name]
+            value = sub_config.get(attr_name, attr_value)
+            value = os.environ.get(env_name, value)
 
-            if env_name in os.environ:
-                value = os.environ[env_name]
-
-            _set_attr(klass, attr_name, value, safe)
+            _set_attr(klass, attr_name, value, safe, env_name in os.environ)
         else:
             _overwrite_attrs(attr_value, sub_config, safe,
                              env_prefix=env_prefix + klass_name)
