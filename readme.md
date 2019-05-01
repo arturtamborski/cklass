@@ -194,6 +194,9 @@ environment variables starting with such prefix, like `MYAPP__CONFIG__HOME_DIR`.
 Class and nesting is defined with two underscores `__`, hence key names may contain
 only single underscores - eg. `CORRECT_NAME`, `INCORRECT___NAME`.
 
+Environment variables support three types: bool converted from string `TRUE` / `FALSE`,
+numbers converted from string with numbers and string if two previous conversions failed.
+
 
 ##### Config / Secret File Names
 
@@ -268,6 +271,7 @@ class Database(Root):
     ENGINE = 'sqlite3'
     HOST = 'localhost'
     NAME = 'simplewebapp_db'
+    PORT = 1111
     
     class Credentials:
         USER = 'readonly'
@@ -299,6 +303,7 @@ Database:
     ENGINE = '{Database.ENGINE}'
     HOST = '{Database.HOST}'
     NAME = '{Database.NAME}'
+    PORT = {Database.PORT}
 
     Credentials:
         USER = {Database.Credentials.USER}'
@@ -345,8 +350,11 @@ Database:
 # conf/environment.sh
 #!/bin/bash
 
+export SIMPLEWEBAPP__COMMON__DEBUG=TRUE
 export SIMPLEWEBAPP__COMMON__DATE="$(date)"
 export SIMPLEWEBAPP__COMMON__SECRET__KEY="seckey"
+
+export SIMPLEWEBAPP__DATABASE__PORT=6621
 export SIMPLEWEBAPP__DATABASE__CREDENTIALS__PASS="supersecretdbpass"
 ```
     
@@ -360,7 +368,8 @@ Common:
     NAME = 'Simple Web App'
     
     # overwritten in conf/common.yaml
-    DEBUG = False
+    # then overwritten by environment variable
+    DEBUG = True
     
     # overwritten by environment variable
     DATE = 'Mon Apr 15 12:35:39 CEST 2019'
@@ -381,6 +390,9 @@ Database:
     ENGINE = 'postgresql'
     HOST = 'psql://localhost'
     NAME = 'simplewebapp_db'
+
+    # overwritten by environment variable
+    PORT = 6621
     
     class Credentials:
         # overwritten in conf/database.json
