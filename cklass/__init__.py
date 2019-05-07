@@ -22,14 +22,16 @@ def _set_attr(klass, attr_name, value, safe, from_env):
     attr = getattr(klass, attr_name)
 
     if from_env:
-        if value == 'TRUE':
-            value = True
-        if value == 'FALSE':
-            value = False
         try:
             value = int(value)
         except ValueError:
             pass
+
+        if value == 'TRUE':
+            value = True
+
+        if value == 'FALSE':
+            value = False
 
     if not safe or attr is None or type(attr) is type(value):
         return setattr(klass, attr_name, value)
