@@ -18,7 +18,6 @@ and environment variables to single configuration class without a hassle!
 ### Constraints:
 
 - all keys are case-insensitive
-- only class variables with type `str` can be overwritten by env vars
 
 
 ### Installation
