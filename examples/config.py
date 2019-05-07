@@ -1,4 +1,10 @@
 # config.py
+
+# a bit hacky way of getting latest
+# version without installing it
+import sys
+sys.path.append('..')
+
 import cklass
 
 
@@ -20,6 +26,7 @@ class Common(Root):
 
     class Secret:
         KEY = ''
+        MAGIC = 0
 
     _config_filename = 'common.yaml'
     _secret_filename = 'common.json'
@@ -41,7 +48,10 @@ class Database(Root):
 cklass.load_config(Common)
 cklass.load_config(Database)
 
+
 print(f'''
+cklass.__version__ = '{cklass.__version__}'
+
 Common:
     NAME = '{Common.NAME}'
     DEBUG = {Common.DEBUG}
@@ -54,6 +64,7 @@ Common:
 
     Secret:
         KEY = '{Common.Secret.KEY}'
+        MAGIC = {Common.Secret.MAGIC}
 
 
 Database:
