@@ -1,9 +1,9 @@
 import os
 
 
-__author__ = 'Artur Tamborski <atamborski@egnyte.com>'
+__author__ = 'Artur Tamborski <tamborskiartur@gmail.com>'
 __license__ = 'MIT'
-__version__ = '0.0.6'
+__version__ = '0.0.7'
 __all__ = ['load_config']
 
 
