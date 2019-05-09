@@ -24,6 +24,9 @@ class Common(Root):
 
     ALLOWED_HOSTS = []
 
+    class Empty:
+        NOT_SET_ANYWHERE = True
+
     class Secret:
         KEY = ''
         MAGIC = 0
@@ -61,6 +64,9 @@ Common:
     SRC_DIR = '.{Common.SRC_DIR}'
 
     ALLOWED_HOSTS = {Common.ALLOWED_HOSTS}
+
+    Empty:
+        NOT_SET_ANYWHERE = {Common.Empty.NOT_SET_ANYWHERE}
 
     Secret:
         KEY = '{Common.Secret.KEY}'
