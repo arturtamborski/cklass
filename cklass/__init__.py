@@ -3,7 +3,7 @@ import os
 
 __author__ = 'Artur Tamborski <tamborskiartur@gmail.com>'
 __license__ = 'MIT'
-__version__ = '0.0.7'
+__version__ = '0.0.8'
 __all__ = ['load_config']
 
 
@@ -98,33 +98,32 @@ def _overwrite_attrs(klass, config, safe, env_prefix=''):
     if env_prefix and not env_prefix.endswith('__'):
         env_prefix += '__'
 
-    for attr_name in klass.__dict__:
-        attr_value = getattr(klass, attr_name)
-        sub_config = config[klass_name]
-
+    for attr_name in vars(klass):
         if attr_name.islower():
             continue
 
-        if type(attr_value) is type:
-            if not attr_name.istitle():
+        attr_key = attr_name.upper()
+        attr_value = getattr(klass, attr_name)
+        sub_config = config[klass_name]
+
+        if type(attr_value) is not type:
+            env_name = env_prefix + klass_name + '__' + attr_key
+
+            value = sub_config.get(attr_key, attr_value)
+            value = os.environ.get(env_name, value)
+
+            _set_attr(klass, attr_key, value, safe, env_name in os.environ)
+        else:
+            if not attr_name.istitle() or attr_key not in sub_config:
                 continue
 
-            if sub_config[attr_name.upper()] is None:
+            if sub_config[attr_key] is None:
                 raise TypeError("Class '%s.%s' expected value with"
                                 " type 'dict', got 'None' instead."
                                 % (klass.__name__, attr_name))
 
-        attr_name = attr_name.upper()
-        if type(attr_value) is not type:
-            env_name = env_prefix + klass_name + '__' + attr_name
-
-            value = sub_config.get(attr_name, attr_value)
-            value = os.environ.get(env_name, value)
-
-            _set_attr(klass, attr_name, value, safe, env_name in os.environ)
-        else:
             _overwrite_attrs(attr_value, sub_config, safe,
-                             env_prefix=env_prefix + klass_name)
+                    env_prefix=env_prefix + klass_name)
 
 
 def load_config(klass):
