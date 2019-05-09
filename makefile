@@ -10,7 +10,8 @@ clean: # remove virtualenv and all build files
 
 prepare: # set up virtual env
 	python3 -m venv .venv
-	source .venv/bin/activate && python3 -m pip install setuptools wheel twine
+	source .venv/bin/activate && \
+		python3 -m pip install setuptools wheel twine pyyaml
 
 build: # build package
 	python3 setup.py bdist_wheel
